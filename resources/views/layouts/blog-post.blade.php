@@ -11,9 +11,18 @@
     <title>Blog Post - Start Bootstrap Template</title>
 
        <!-- Bootstrap Core CSS -->
-    <link href="{{asset('css/app.css')}}" rel="stylesheet">
+   <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
-    <link href="{{asset('css/libs.css')}}" rel="stylesheet">
+<style type="text/css">
+  
+.comment-reply{
+  display:none;
+}
+
+
+</style>
     
        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -29,7 +38,7 @@
       </style>
   </head>
 
-  <body>
+  <body style="padding-top: 40px;">
 
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
@@ -148,6 +157,8 @@
 
 <!-- jQuery -->
 <script src="{{asset('js/libs.js')}}"></script>
+
+@yield('scripts')
 
   </body>
 

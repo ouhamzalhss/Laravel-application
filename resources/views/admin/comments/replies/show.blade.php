@@ -36,13 +36,13 @@
 
              <td>{{$reply->body}}</td>
 
-            <td><a href="{{route('home.post',$reply->comment->id)}}">View Comment</a></td>
+            <td><a href="{{route('home.post',$reply->comment->post->id)}}">View post</a></td>
 
              <td>
              	
              	@if($reply->is_active == 1)
 
-		             	{!! Form::open(['method'=>'PATCH', 'action'=> ['PostCommentsController@update',$reply->id]]) !!}
+		             	{!! Form::open(['method'=>'PATCH', 'action'=> ['CommentRepliesController@update',$reply->id]]) !!}
 
 			                 
 			                 <div class="form-group">
@@ -56,7 +56,7 @@
                  @else
 
 
-		                 {!! Form::open(['method'=>'PATCH', 'action'=> ['PostCommentsController@update',$reply->id]]) !!}
+		                 {!! Form::open(['method'=>'PATCH', 'action'=> ['CommentRepliesController@update',$reply->id]]) !!}
 		                      <div class="form-group">
 			                     <input type="hidden" name="is_active" value="1">
 			                  </div>
@@ -71,7 +71,7 @@
 
              <td>
              	
-             	 {!! Form::open(['method'=>'DELETE', 'action'=> ['PostCommentsController@destroy',$reply->id]]) !!}
+             	 {!! Form::open(['method'=>'DELETE', 'action'=> ['CommentRepliesController@destroy',$reply->id]]) !!}
 		                  <div class="form-group">
 		                     {!! Form::submit('Delete',['class'=>'btn btn-danger']) !!}
 		                 </div>

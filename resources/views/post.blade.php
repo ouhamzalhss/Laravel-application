@@ -6,91 +6,124 @@
 
 
   <!-- Title -->
-          <h1 class="mt-4">Post Title</h1>
+          <h1 class="mt-4">{{$post->title}}</h1>
 
           <!-- Author -->
           <p class="lead">
             by
-            <a href="#">Start Bootstrap</a>
+            <a href="#">{{$post->user->name}}</a>
           </p>
 
           <hr>
 
           <!-- Date/Time -->
-          <p>Posted on January 1, 2018 at 12:00 PM</p>
+          <p>Posted {{$post->created_at->diffForHumans()}}</p>
 
           <hr>
 
           <!-- Preview Image -->
-          <img class="img-fluid rounded" src="http://placehold.it/900x300" alt="">
+          <img class="img-fluid rounded" src="{{$post->photo->file}}" alt="">
 
           <hr>
 
           <!-- Post Content -->
-          <p class="lead">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ducimus, vero, obcaecati, aut, error quam sapiente nemo saepe quibusdam sit excepturi nam quia corporis eligendi eos magni recusandae laborum minus inventore?</p>
-
-          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ut, tenetur natus doloremque laborum quos iste ipsum rerum obcaecati impedit odit illo dolorum ab tempora nihil dicta earum fugiat. Temporibus, voluptatibus.</p>
-
-          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eos, doloribus, dolorem iusto blanditiis unde eius illum consequuntur neque dicta incidunt ullam ea hic porro optio ratione repellat perspiciatis. Enim, iure!</p>
-
-          <blockquote class="blockquote">
-            <p class="mb-0">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>
-            <footer class="blockquote-footer">Someone famous in
-              <cite title="Source Title">Source Title</cite>
-            </footer>
-          </blockquote>
-
-          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Error, nostrum, aliquid, animi, ut quas placeat totam sunt tempora commodi nihil ullam alias modi dicta saepe minima ab quo voluptatem obcaecati?</p>
-
-          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Harum, dolor quis. Sunt, ut, explicabo, aliquam tenetur ratione tempore quidem voluptates cupiditate voluptas illo saepe quaerat numquam recusandae? Qui, necessitatibus, est!</p>
+          <p class="lead">{{$post->body}}</p>
 
           <hr>
 
+          @if(Session::has('comment_message'))
+             <div class="alert alert-success">
+
+             {{session('comment_message')}}
+               
+             </div>
+
+          @endif
           <!-- Comments Form -->
           <div class="card my-4">
             <h5 class="card-header">Leave a Comment:</h5>
             <div class="card-body">
-              <form>
-                <div class="form-group">
-                  <textarea class="form-control" rows="3"></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
-              </form>
+              {!! Form::open(['method'=>'POST', 'action'=> 'PostCommentsController@store']) !!}
+
+                 <input type="hidden" name="post_id" value="{{$post->id}}">
+                 <div class="form-group">
+                     {!! Form::label('body','Body:') !!}
+                     {!! Form::textarea('body',null,['class'=>'form-control','rows'=>3]) !!}
+                 </div>
+                  <div class="form-group">
+                     {!! Form::submit('submit comment',['class'=>'btn btn-primary']) !!}
+                 </div>
+              {!! Form::close() !!}
             </div>
           </div>
+
+@if(count($comments) > 0)
+
+  @foreach($comments as $comment)
 
           <!-- Single Comment -->
           <div class="media mb-4">
-            <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">
+            <img height="50" class="d-flex mr-3 rounded-circle" src="{{ $comment->photo }}" alt="">
             <div class="media-body">
-              <h5 class="mt-0">Commenter Name</h5>
-              Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+              <h5 class="mt-0">{{$comment->author}}
+              <small>{{$comment->created_at->diffForHumans()}}</small></h5>
+              <p>{{$comment->body}}</p>
+
+         
+              <!-- replies Comment -->
+                  @foreach($comment->replies as $reply)
+                     @if($reply->is_active == 1)
+                         <div class="media mt-4">
+                          <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">
+                          <div class="media-body">
+                          <h5 class="mt-0">{{$reply->author}}
+                             <small>{{$reply->created_at->diffForHumans()}}</small></h5>
+                          </h5>
+                           <p>  {{$reply->body}} </p>
+                          </div>
+                           </div>
+                     @endif
+                  @endforeach 
+           
+
+                <!-- replies form -->
+                  <div class="comment-reply-container">
+                        <button class="toggle-reply btn btn-primary pull-right"> Reply</button>
+                         <div class="comment-reply">
+                             {!! Form::open(['method'=>'POST', 'action'=> 'CommentRepliesController@createReply']) !!}
+
+                               <input type="hidden" name="comment_id" value="{{$comment->id}}">
+                               <div class="form-group">
+                                   {!! Form::label('body','Body:') !!}
+                                   {!! Form::textarea('body',null,['class'=>'form-control','rows'=>1]) !!}
+                               </div>
+                                <div class="form-group">
+                                   {!! Form::submit('submit',['class'=>'btn btn-primary']) !!}
+                               </div>
+                            {!! Form::close() !!}
+                        </div>
+                 </div>
+
+
             </div>
           </div>
+  @endforeach
+@endif
+          
+          
+@stop
 
-          <!-- Comment with nested comments -->
-          <div class="media mb-4">
-            <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">
-            <div class="media-body">
-              <h5 class="mt-0">Commenter Name</h5>
-              Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
 
-              <div class="media mt-4">
-                <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">
-                <div class="media-body">
-                  <h5 class="mt-0">Commenter Name</h5>
-                  Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                </div>
-              </div>
 
-              <div class="media mt-4">
-                <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">
-                <div class="media-body">
-                  <h5 class="mt-0">Commenter Name</h5>
-                  Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                </div>
-              </div>
+@section('scripts')
+<script type="text/javascript">
+  
+  $(".comment-reply-container .toggle-reply").click(function(){
+  
+   $(this).next().slideToggle("slow");
 
-            </div>
-          </div>
+  });
+</script>
+
+
 @stop

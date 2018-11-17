@@ -38,6 +38,8 @@
       <th scope="col">Owner</th>
       <th scope="col">Category</th>
       <th scope="col">Body</th>
+      <th scope="col">Post</th>
+      <th scope="col">Comment</th>
       <th scope="col">Create</th>
       <th scope="col">Update</th>
     </tr>
@@ -53,13 +55,15 @@
       <th>{{$post->user->name}}</th>
       <th>{{$post->category ? $post->category->name : 'uncategorized'}}</th>
       <th>{{str_limit($post->body,30)}}</th>
+      <th><a href="{{route('home.post',$post->id)}}">View Post</a></th>
+      <th><a href="{{route('admin.comments.show',$post->id)}}">View comments</a></th>
       <th>{{$post->created_at->diffForHumans()}}</th>
       <th>{{$post->updated_at->diffForHumans()}}</th>
     </tr>
     
     @endforeach
     @endif
-   
+    
   </tbody>
 </table>
 

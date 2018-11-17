@@ -5,6 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
+use App\CommentReply;
+use App\Comment;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
+
 
 class CommentRepliesController extends Controller
 {
@@ -15,7 +20,7 @@ class CommentRepliesController extends Controller
      */
     public function index()
     {
-        //
+         
     }
 
     /**
@@ -36,7 +41,7 @@ class CommentRepliesController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        
     }
 
     /**
@@ -47,7 +52,11 @@ class CommentRepliesController extends Controller
      */
     public function show($id)
     {
-        //
+        $comment = Comment::findOrFail($id);
+
+        $replies = $comment->replies;
+
+        return view('admin.comments.replies.show',compact('replies'));
     }
 
     /**
@@ -70,7 +79,14 @@ class CommentRepliesController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+       $reply = CommentReply::findOrFail($id);
+       $reply->is_active = $request->is_active;
+       $reply->save();
+
+
+      Session::flash('updated_comment','The Comment has been updated!');
+
+      return redirect()->back();
     }
 
     /**
@@ -81,6 +97,29 @@ class CommentRepliesController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $reply = CommentReply::findOrFail($id);
+     
+      $reply->delete();
+
+      Session::flash('deleted_comment','The Comment has been deleted!');
+
+      return redirect()->back();
+    }
+
+    public function createReply(Request $request){
+         $user = Auth::user();
+         $data = [
+           'comment_id' => $request->comment_id,
+           'author' => $user->name,
+           'email' => $user->email,
+           //'photo' => $user->photo->file,
+           'is_active' => 0,
+           'body' => $request->body,
+
+       ];
+
+       CommentReply::create($data);
+       $request->session()->flash('comment_message','Your message has been submited and is waiting moderation.');
+       return redirect()->back();
     }
 }
